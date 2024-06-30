@@ -1,0 +1,236 @@
+---
+title: "Premier League Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: column
+runtime: shiny
+---
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+    Goals
+================================
+Column {data-width=400}
+-----------------------------------------------------------------------
+### Number of goals by Player
+```{r}
+library(tidyverse)
+g<-read.csv("C:\\Users\\aayus\\Documents\\premierleaguegoals.csv")
+library(DT)
+datatable(g,options = list(lengthChange = FALSE,searching=FALSE,paging=FALSE,info=FALSE))
+```
+### Number of goals by Club
+```{r}
+library(tidyverse)
+w<-read.csv("C:\\Users\\aayus\\Documents\\clubgoals.csv")
+library(DT)
+datatable(w,options = list(lengthChange = FALSE,searching=FALSE,paging=FALSE,info=FALSE))
+```
+
+Column {.tabset .tabset-fade data-width=600}
+-----------------------------------------------------------------------
+
+### Goals Conceded
+
+```{r}
+
+#goalsconceded
+df<-read.csv("C:\\Users\\aayus\\Documents\\pl_20-21.csv")
+library(dplyr)
+defenders<-subset(df,Position=="Defender")
+defenders<-defenders%>%
+  arrange(desc(Appearances)) 
+defenders<- head(defenders,10)
+defenders["cpg"]<-defenders$Goals.Conceded/defenders$Appearances
+library(RColorBrewer)
+coul <- brewer.pal(length(defenders$Name), "Paired") 
+par(mar=c(5,8,2,3),xpd=TRUE)
+plot(defenders$Clean.sheets,defenders$cpg,ylab='Goals conceded per game',cex=defenders$Tackles/70, main ='Goals conceded per game vs Clean sheets',xlab="Clean Sheets",col=coul,pch=20)
+legend("bottomleft",defenders$Name, cex = 0.4, fill =coul,inset=c(-0.40,0))
+```
+
+### Number of Goals by club
+```{r}
+cg=read.csv("C:\\Users\\aayus\\Documents\\clubgoals.csv")
+ppercent<- paste(round(100*cg$Stat/sum(cg$Stat), 1),"%")
+library(RColorBrewer)
+coul <- brewer.pal(length(cg$Club), "Paired") 
+par(mar=c(5,8,2,3),xpd=TRUE)
+pie(cg$Stat,labels=ppercent,main="Goals by Club",col=coul,clockwise = TRUE,radius=1)
+legend("bottomleft",cg$Club, cex = 0.6, fill =coul,inset=c(-0.35,0))
+```
+
+### Number of goals by player  
+```{r}
+goals<-read.csv("C:\\Users\\aayus\\Documents\\premierleaguegoals.csv")
+par(mar=c(8,5,3,1),xpd=TRUE)
+barplot(goals$Stat,main="Goals in Premier league 2020/21",names.arg=goals$Player,las=2,col="#32a87d",ylab = "Number of goals",cex.names = 0.75,ylim=c(0,25))
+```
+
+    Shots
+================================
+Column {data-width=400}
+-----------------------------------------------------------------------
+### Number of Shots by Player
+```{r}
+library(tidyverse)
+g<-read.csv("C:\\Users\\aayus\\Documents\\premierleagueshots.csv")
+library(DT)
+datatable(g,options = list(lengthChange = FALSE,searching=FALSE,paging=FALSE,info=FALSE))
+```
+### Number of Shots by Club
+```{r}
+library(tidyverse)
+w<-read.csv("C:\\Users\\aayus\\Documents\\clubshots.csv")
+library(DT)
+datatable(w,options = list(lengthChange = FALSE,searching=FALSE,paging=FALSE,info=FALSE))
+```
+
+Column {.tabset .tabset-fade data-width=600}
+-----------------------------------------------------------------------
+
+### Goals correlation to Shots
+
+```{r}
+wt<-read.csv("C:\\Users\\aayus\\Documents\\ShotsGoals.csv")
+paste("Correlation:",round(cor(wt$Goals, as.integer(gsub(",","",wt$Shots))), 2))
+# Creating the plot
+plot(as.integer(gsub(",","",wt$Shots)),wt$Goals ,ylab = "Goals",xlab = "Shots",main = "Relation between number of Shots and Goals", pch = 20, col = "darkblue")
+# Regression line
+abline(lm (wt$Goals~as.integer(gsub(",","",wt$Shots))), col = "maroon", lwd = 3)
+
+```
+
+### Number of Shots by club
+```{r}
+cs<-read.csv("C:\\Users\\aayus\\Documents\\clubshots.csv")
+ppercent<- paste(round(100*cs$Stat/sum(cs$Stat), 1),"%")
+library(RColorBrewer)
+coul <- brewer.pal(length(cs$Stat), "Set3") 
+par(mar=c(5,8,2,3),xpd=TRUE)
+pie(cs$Stat,labels=ppercent,main="Shots by Club",col=coul,clockwise = TRUE,radius=1)
+legend("bottomleft",cs$Club, cex = 0.6, fill =coul,inset = c(- 0.42, 0))
+```
+
+### Number of Shots by player  
+```{r}
+shots<-read.csv("C:\\Users\\aayus\\Documents\\premierleagueshots.csv")
+par(mar=c(8,5,3,1),xpd=TRUE)
+barplot(shots$Stat,main="Shots in Premier league 2020/21",names.arg=shots$Player,las=2,col="#32a87d",ylab = "Number of shots",cex.names = 0.75)
+```
+
+    Touches and Player Statistics
+================================
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### Number of Touches by Player
+```{r}
+library(tidyverse)
+g<-read.csv("C:\\Users\\aayus\\Documents\\premierleaguetouches.csv")
+library(DT)
+datatable(g,options = list(lengthChange = FALSE,searching=FALSE,paging=FALSE,info=FALSE))
+```
+### Number of Touches by Club
+```{r}
+library(tidyverse)
+w<-read.csv("C:\\Users\\aayus\\Documents\\clubtouches.csv")
+library(DT)
+datatable(w,options = list(lengthChange = FALSE,searching=FALSE,paging=FALSE,info=FALSE))
+```
+
+Column {.tabset .tabset-fade data-width=600}
+-----------------------------------------------------------------------
+### Player Statistics
+
+```{r}
+#radar chart
+df2<-read.csv("C:\\Users\\aayus\\Downloads\\football.csv")
+library(fmsb)
+pl<-subset(df2,Player.Name=="Harry Kane")
+pl3<-subset(df2,Player.Name=="Bruno Fernandes")
+pl2<-subset(df2,Player.Name=="Mohamed Salah")
+pls<-data.frame(pl['Goals.Per.Match'],pl['Passes.Per.Match'],pl['Shooting.Accuracy..'],pl['Appearances'],pl['Shots.On.Target'])
+pls2<-data.frame(pl2['Goals.Per.Match'],pl2['Passes.Per.Match'],pl2['Shooting.Accuracy..'],pl2['Appearances'],pl2['Shots.On.Target'])
+pls3<-data.frame(pl3['Goals.Per.Match'],pl3['Passes.Per.Match'],pl3['Shooting.Accuracy..'],pl3['Appearances'],pl3['Shots.On.Target'])
+max_min <- data.frame(Goals.Per.Match = c(1,0),Passes.Per.Match=c(100,0),Shooting.Accuracy..=c(50,0),Appearances=c(1000,0),Shots.On.Target=c(500,0))
+rownames(max_min) <- c("Max", "Min")
+# Bind the variable ranges to the data
+dfn<-rbind(max_min,pls,pls2,pls3)
+pldata<-dfn[c("Max", "Min", "498","7","155"), ]
+colors_border=c(rgb(0.7,0.5,0.1,0.4), rgb(0.2,0.5,0.5,0.4), rgb(0.8,0.2,0.5,0.4) )
+colors_in=c(rgb(0.7,0.5,0.1,0.4), rgb(0.2,0.5,0.5,0.4), rgb(0.8,0.2,0.5,0.4) )
+radarchart(pldata,title="Player Stats for Top 3 Goal Scorers",cglcol="grey", cglty=1, axislabcol="grey",pcol=colors_border,pfcol = colors_in);
+legend("topleft",legend = c("Harry Kane","Mohamed Salah","Bruno Fernandes"), bty = "n", pch=20 , col=colors_in , text.col = "black", cex=0.8, pt.cex=3)
+
+```
+
+### Number of touches by player
+```{r}
+touches<-read.csv("C:\\Users\\aayus\\Documents\\premierleaguetouches.csv")
+par(mar=c(8,5,3,1),xpd=TRUE)
+barplot(as.integer(gsub(",","",touches$Stat)),main="Touches in Premier league 2020/21",names.arg=touches$Player,las=2,col="#32a87d",ylab = "Number of touches",cex.names = 0.75)
+
+```
+
+### Number of touches by club
+
+```{r}
+touchesclub<-read.csv("C:\\Users\\aayus\\Documents\\clubtouches.csv")
+ppercent<- paste(round(100*as.integer(gsub(",","",touchesclub$Stat))/sum(as.integer(gsub(",","",touchesclub$Stat))), 1),"%")
+library(RColorBrewer)
+coul <- brewer.pal(length(touchesclub$Stat), "Set3") 
+par(mar=c(5,8,2,3),xpd=TRUE)
+pie(as.integer(gsub(",","",touchesclub$Stat)),labels=ppercent,main="Touches by Club",col=coul,clockwise = TRUE,radius=1)
+legend("bottomleft",touchesclub$Club, cex = 0.6, fill =coul,inset = c(- 0.40, 0))
+```
+    
+    Correlation with Wins
+================================
+Column {.tabset .tabset-fade data-width=1000}
+-----------------------------------------------------------------------
+### Shots
+
+```{r}
+
+#correlation of wins and Shots
+
+wt<-read.csv("C:\\Users\\aayus\\Documents\\WinsShots.csv")
+paste("Correlation:", round(cor(wt$Wins, as.integer(gsub(",","",wt$Shots))), 2))
+
+# Creating the plot
+plot(as.integer(gsub(",","",wt$Shots)),wt$Wins ,ylab = "Wins",xlab = "Shots",main = "Relation between number of Shots and Wins", pch = 20, col = "darkblue")
+
+# Regression line
+abline(lm (wt$Wins~as.integer(gsub(",","",wt$Shots))), col = "maroon", lwd = 3)
+
+```
+
+### Touches
+
+```{r}
+#correlation of wins and touches
+
+wt<-read.csv("C:\\Users\\aayus\\Documents\\Winstouches.csv")
+paste("Correlation:", round(cor(wt$Wins, as.integer(gsub(",","",wt$Touches))), 2))
+# Creating the plot
+plot(as.integer(gsub(",","",wt$Touches)),wt$Wins ,ylab = "Wins",xlab = "Touches",main = "Relation between number of Touches and Wins", pch = 20, col = "darkblue")
+
+# Regression line
+abline(lm (wt$Wins~as.integer(gsub(",","",wt$Touches))), col = "maroon", lwd = 3)
+
+# Pearson correlation
+```
+
+### Tackles
+```{r}
+wt<-read.csv("C:\\Users\\aayus\\Documents\\WinsTackles.csv")
+paste("Correlation:", round(cor(wt$Wins, as.integer(gsub(",","",wt$Tackles))), 2))
+# Creating the plot
+plot(wt$Tackles,as.integer(gsub(",","",wt$Wins)) ,xlab = "Tackles",ylab = "Wins",main = "Relation between number of Tackles and Wins", pch = 20, col = "darkblue")
+# Regression line
+abline(lm(wt$Wins~as.integer(gsub(",","",wt$Tackles))), col = "maroon", lwd = 3)
+# Pearson correlation
+```

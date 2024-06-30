@@ -1,0 +1,272 @@
+---
+title: "ZERO1"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: column
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+```
+
+# Passes
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### Data for individual player
+
+```{r}
+library(tidyverse)
+passes <-read.csv("passes1.csv")
+library(DT)
+
+
+datatable(passes)
+```
+### Data for top 10 teams
+
+```{r}
+library(tidyverse)
+w <-read.csv("passes_wins.csv")
+library(DT)
+
+# datatable(passes, options=list(
+      # pageLength = 20,
+      # lengthMenu = c(2, 12, 18)
+       #))%>%
+     # formatStyle( 0, target= 'row',color = 'black', fontWeight ='bold', lineHeight='100%')
+
+datatable(w)
+```
+
+Column {.tabset .tabset-fade data-width=600}
+-----------------------------------------------------------------------
+
+### Bar graph
+
+```{r}
+
+passes <-read.csv("passes1.csv")
+
+midpts<-barplot(passes$Stat,ylab="Total passes",col=rainbow(50),main="Stats for passes",cex.names = 0.8,las = 2,ylim = c(0, 1000))
+
+grid(nx = NA, ny = NULL, lwd = 1, lty = 1, col = "gray")
+
+text(passes$Player,
+     x = midpts,
+     offset = -0.1,
+     y = -20,
+     cex = 0.8,
+     srt = 40,
+     xpd = TRUE,
+     pos = 2 )
+
+```
+
+### Pie chart
+
+```{r}
+passes <-read.csv("passes1.csv")
+w <-read.csv("passes_wins.csv")
+piepercent<- round(100*w$Passes/sum(w$Passes), 1)
+
+pie(w$Passes,labels =w$Club,col=rainbow(10),main="Total passes by each club",cex=0.7)
+
+legend("topright", legend =w$Passes, cex = 0.6,fill = rainbow(10))
+
+```
+
+### Correlation
+
+```{r}
+w <-read.csv("passes_wins.csv")
+
+# Data generation
+set.seed(1)
+x <- w$Passes
+y <- w$Wins
+
+# Creating the plot
+plot(x, y,xlab = "Passes",ylab = "Wins",main = "Relation between number of Passes and Wins", pch = 19, col = "blue")
+
+# Regression line
+abline(lm(y ~ x), col = "red", lwd = 3)
+
+# Pearson correlation
+text(paste("Correlation:", round(cor(x, y), 2)), x = 17000, y = 25)
+
+```
+
+# Assists
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### Data for individual player
+
+```{r}
+library(tidyverse)
+assists <-read.csv("assists1.csv")
+library(DT)
+
+
+datatable(assists)
+
+```
+### Data for top 10 teams
+
+```{r}
+w <-read.csv("assists_wins.csv")
+library(DT)
+
+datatable(w)
+
+```
+
+Column {.tabset .tabset-fade data-width=600}
+-----------------------------------------------------------------------
+
+### Bar graph
+
+```{r}
+
+assists <-read.csv("assists1.csv")
+pal <- colorRampPalette(colors = c("blue", "lightblue"))(10)
+
+midpts<-barplot(assists$Stat,ylab="Total assists",col=pal,main="Stats for passes",cex.names = 0.8,las = 2,ylim = c(0, 20))
+
+grid(nx = NA, ny = NULL, lwd = 1, lty = 1, col = "gray")
+
+text(assists$Player,
+     x = midpts,
+     offset = -0.1,
+     y = -1,
+     cex = 0.8,
+     srt = 40,
+     xpd = TRUE,
+     pos = 2 )
+
+```
+
+### Scatter Plot
+
+```{r}
+w <-read.csv("assists_wins.csv")
+plot(w$Assists,
+     w$Goals,
+     main="Comparing Goals and Assists",
+     xlab="Assists",
+     ylab="Goals",
+     pch=19,
+     cex=w$Wins/9,
+     cex.axis=1.5,
+     col=rainbow(10))
+
+```
+
+### Correlation
+
+```{r}
+w <-read.csv("assists_wins.csv")
+
+# Data generation
+set.seed(1)
+x <- w$Assists
+y <- w$Wins
+
+# Creating the plot
+plot(x, y,xlab = "Assists",ylab = "Wins",main = "Relation between number of Assists and Wins", pch = 19, col = "blue")
+
+# Regression line
+abline(lm(y ~ x), col = "red", lwd = 3)
+
+# Pearson correlation
+text(paste("Correlation:", round(cor(x, y), 2)), x = 60, y = 25)
+
+```
+
+# Fouls
+
+Column {data-width=400}
+-----------------------------------------------------------------------
+
+### Data for individual player
+
+```{r}
+library(tidyverse)
+fouls <-read.csv("fouls1.csv")
+library(DT)
+
+
+datatable(fouls)
+
+```
+### Data for top 10 teams
+
+```{r}
+w <-read.csv("fouls_cards.csv")
+library(DT)
+
+datatable(w)
+```
+
+Column {.tabset .tabset-fade data-width=600}
+-----------------------------------------------------------------------
+
+### Bar graph
+
+```{r}
+
+fouls <-read.csv("fouls1.csv")
+pal <- colorRampPalette(colors = c("green", "lightgreen"))(10)
+
+midpts<-barplot(fouls$Stat,ylab="Total assists",col=pal,main="Stats for passes",cex.names = 0.8,las = 2,ylim = c(0, 100))
+
+grid(nx = NA, ny = NULL, lwd = 1, lty = 1, col = "gray")
+
+text(fouls$Player,
+     x = midpts,
+     offset = -0.1,
+     y = -1,
+     cex = 0.8,
+     srt = 40,
+     xpd = TRUE,
+     pos = 2 )
+
+```
+
+### Stacked Bar chart
+
+```{r}
+w <-read.csv("fouls_cards.csv")
+colors = c("red","yellow")
+cards <- c("Red","Yellow")
+Values <- matrix(c(2,1,3,1,5,7,6,1,3,8,5,3,1,2,8,7,4,8,7,9), nrow = 2, ncol = 10, byrow = TRUE)
+barplot(Values, main = "total revenue", ylab = "Cards", col = colors,ylim = c(0,20))
+grid(nx = NA, ny = NULL, lwd = 1, lty = 1, col = "gray")
+text(w$Club,
+     x = midpts,
+     offset = -0.1,
+     y = -1,
+     cex = 0.8,
+     srt = 40,
+     xpd = TRUE,
+     pos = 2 )
+
+legend("topleft", cards, cex = 1, fill = colors)
+
+```
+
+### Pie Chart
+
+```{r}
+fouls <-read.csv("fouls1.csv")
+w <-read.csv("fouls_cards.csv")
+piepercent<- round(100*w$Passes/sum(w$Passes), 1)
+
+pie(w$Fouls,labels =w$Club,col=rainbow(10),main="Total fouls by each club in percentage",cex=0.7)
+
+legend("topright", legend =w$Fouls, cex = 0.6,fill = rainbow(10))
+
+```

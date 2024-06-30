@@ -1,0 +1,195 @@
+---
+title: "Premier League Dashboard"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+runtime: shiny
+---
+
+{r setup, include=FALSE}
+library(flexdashboard)
+
+# YELLOW CARD ANALYSIS
+Column {data-width=450}
+-----------------------------------------------------------------------
+
+### player yellow cards 
+
+```{r}
+library(DT)
+library(tidyverse)
+library(dplyr)
+library(rvest)
+
+#DATA FOR PLAYER YELLOWS
+url1<-"https://sports.ndtv.com/english-premier-league/stats/most-yellow-cards-player-statsdetail/2020-21"
+y=read_html(url1) %>%
+html_nodes("table") %>%
+html_table() 
+ye=data.frame(y)
+
+#ADDITION OF AVG YELLOWS PER GAME 
+ye["average"]<-(ye$yellow.card/ye$Games.Played)
+yellowcards=head(ye,10)
+datatable(yellowcards,options=list(pageLength = 40, lengthMenu = c(2, 12, 18) ))%>%
+     formatStyle( 0, target= 'row',color = 'black', lineHeight='100%')
+
+```
+
+
+### TEAM YELLOW CARDS
+
+```{r}
+library(DT)
+library(tidyverse)
+library(dplyr)
+library(rvest)
+
+url2<-"https://sports.ndtv.com/english-premier-league/stats/most-yellow-cards-team-statsdetail/2020-21"
+t=read_html(url2) %>%
+html_nodes("table") %>%
+html_table() 
+
+team=data.frame(t)
+teamyellow=head(team,10)
+datatable(teamyellow)
+```
+
+
+
+
+Column {.tabset .tabset-fade data-width=600}
+-----------------------------------------------------------------------
+
+### games played vs yellowcards
+
+```{r}
+
+plot(yellowcards$Games.Played,yellowcards$yellow.card,type="p",xlab ="
+     games played", ylab ="yellow cards",main="GAMES PLAYED VS YELLOWCARDS CONCEDED",col=rainbow(10),pch=19)
+legend("topleft",legend = yellowcards$Player.Name,col = rainbow(10),cex=0.5,fill = rainbow((10)))
+
+```
+
+### player ranking VS per game yellow card average
+```{r}
+
+plot(yellowcards$average,yellowcards$Rank,type="p",xlab ="
+     yellow card average per game", ylab ="ranking",main="PLAYER RANKING VS PER GAME YELLOWCARD AVERAGE",col=rainbow(10),pch=19)
+legend("bottomleft",legend = yellowcards$Player.Name,col = rainbow(10),cex=0.5,fill = rainbow((10)))
+```
+
+
+### barplot for top 10 players with most yellow
+```{r}
+
+barplot(yellowcards$yellow.card, width = 0.4,main ="TOP 10 PLAYERS WITH MOST YELLOW CARDS",col = rainbow(10),xlab="yellow card numbers")
+legend("topright",legend = yellowcards$Player.Name,col = rainbow(10),cex=0.4,fill = rainbow((10)))
+```
+
+### pieplot for YELLOWS CARDS 20/21(clubs)
+```{r}
+
+slices=teamyellow$yellow.card
+names=teamyellow$Club.Name
+pct=round(slices/sum(slices)*100)
+new=paste(pct,"%",sep="")
+pie(slices,labels = new,main = "YELLOW CARDS 20/21(clubs)",col=rainbow(10))
+legend("topleft",legend=teamyellow$Club.Name,col=rainbow(10),cex = 0.4,fill=rainbow(10))
+```
+
+
+# RED CARD ANALYSIS
+Column {data-width=450}
+-----------------------------------------------------------------------
+
+
+### player yellow cards 
+
+{r}
+library(DT)
+library(tidyverse)
+library(dplyr)
+library(rvest)
+
+#DATA FOR PLAYER RED
+
+url3<-"https://sports.ndtv.com/english-premier-league/stats/most-red-cards-player-statsdetail/2020-21"
+r=read_html(url3) %>%
+  html_nodes("table") %>%
+  html_table() 
+red=data.frame(r)
+
+redcards=head(red,10)
+redcards["average"]=(redcards$red.card/redcards$Games.Played)
+datatable(redcards)
+
+
+### TEAM RED CARDS
+
+{r}
+library(DT)
+library(tidyverse)
+library(dplyr)
+library(rvest)
+
+url4<-"https://sports.ndtv.com/english-premier-league/stats/most-red-cards-team-statsdetail/2020-21"
+tr=read_html(url4) %>%
+  html_nodes("table") %>%
+  html_table() 
+teamred=data.frame(tr)
+teamredcards=head(teamred,10)
+datatable(teamredcards)
+
+
+
+
+Column {.tabset .tabset-fade data-width=600}
+-----------------------------------------------------------------------
+
+### games played vs RED cards
+
+{r}
+
+plot(redcards$Games.Played,redcards$red.card,type="p",xlab ="
+     games played", ylab ="red cards",main="GAMES PLAYED VS RED CARDS CONCEDED",col=rainbow(10),pch=19)
+legend("topleft",legend = redcards$Player.Name,col = rainbow(10),cex=0.8,fill = rainbow((10)))
+
+
+
+### player ranking per game red card average
+{R}
+plot(redcards$average,redcards$Rank,type="p",xlab ="
+     red card average per game", ylab ="ranking",main="PLAYER RANKING VS PER GAME REDCARD AVERAGE",col=rainbow(10),pch=19)
+legend("center",legend = redcards$Player.Name,col = rainbow(10),cex=0.5,fill = rainbow((10)))
+
+
+### correlation between games played vs per game red card average
+{r}
+
+#CORRELATION
+# Data generation
+set.seed(1)
+x <- redcards$average
+y <- redcards$Games.Played
+
+# Creating the plot
+plot(x, y,xlab = "Passes",ylab = "Wins",main = "RELATIONSHIP BETWEEN PER GAME RED CARD AVERAGE AND GAMES PLAYED", pch = 19, col = rainbow(10))
+
+# Regression line
+abline(lm(y ~ x), col = "red", lwd = 3)
+
+# Pearson correlation
+text(paste("Correlation:", round(cor(x, y), 2)), x = 17000, y = 25)
+cd=cor(x,y)
+
+
+
+
+### pie plot
+{r}
+slices=teamredcards$red.card
+names=teamredcards$Club.Name
+pct=round(slices/sum(slices)*100)
+new=paste(names,"-",pct,"%",sep="")
+pie(slices,labels = new,main = "RED CARDS 20/21(club)",col=rainbow(11:20))
