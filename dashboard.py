@@ -228,5 +228,5 @@ def update_tackles_correlation(tackles_data, wins_data):
     return fig
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run(debug=True)
 
