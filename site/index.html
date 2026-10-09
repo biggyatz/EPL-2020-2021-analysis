@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Premier League 2020/21 in Numbers</title>
+<meta name="description" content="Interactive Premier League 2020/21 dashboard: leaderboards, finishing efficiency, what drives wins, and player percentile profiles.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <p class="eyebrow">Premier League · 2020/21 season</p>
+    <h1>The season in numbers</h1>
+    <p class="lead">Who scored, who created, who finished efficiently, and which team stats actually track with winning. Built from 488 players' season statistics.</p>
+    <div class="kpis" id="kpis"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="card" id="leaders" aria-labelledby="leaders-title">
+    <div class="card-head">
+      <div>
+        <h2 id="leaders-title">Leaderboard</h2>
+        <p class="sub" id="leaders-sub">Top 10 players</p>
+      </div>
+      <button class="ghost" data-table-toggle="leaders">Show table</button>
+    </div>
+    <div class="controls">
+      <label class="select">
+        <span>Stat</span>
+        <select id="leader-metric"></select>
+      </label>
+      <div class="chips" id="leader-pos" role="radiogroup" aria-label="Position"></div>
+    </div>
+    <div class="legend" id="leaders-legend"></div>
+    <div class="chart" id="leaders-chart"></div>
+    <div class="table-view" id="leaders-table" hidden></div>
+  </section>
+
+  <section class="card" id="finishing" aria-labelledby="finishing-title">
+    <div class="card-head">
+      <div>
+        <h2 id="finishing-title">Finishing: shots vs goals</h2>
+        <p class="sub">Players with 15+ shots. Dashed guides mark 10% and 20% shot conversion: above the upper line is elite finishing.</p>
+      </div>
+      <button class="ghost" data-table-toggle="finishing">Show table</button>
+    </div>
+    <div class="legend" id="finishing-legend"></div>
+    <div class="chart" id="finishing-chart"></div>
+    <div class="table-view" id="finishing-table" hidden></div>
+  </section>
+
+  <section class="card" id="wins" aria-labelledby="wins-title">
+    <div class="card-head">
+      <div>
+        <h2 id="wins-title">What actually wins matches?</h2>
+        <p class="sub" id="wins-sub">Top 10 clubs by wins. Each panel plots wins against one team stat; <em>r</em> is the Pearson correlation.</p>
+      </div>
+      <button class="ghost" data-table-toggle="wins">Show table</button>
+    </div>
+    <p class="insight" id="wins-insight"></p>
+    <div class="multiples" id="wins-chart"></div>
+    <div class="table-view" id="wins-table" hidden></div>
+  </section>
+
+  <section class="card" id="profile" aria-labelledby="profile-title">
+    <div class="card-head">
+      <div>
+        <h2 id="profile-title">Player profile</h2>
+        <p class="sub">Percentile rank per appearance against players in the same position (10+ appearances). 100 = best in the league.</p>
+      </div>
+    </div>
+    <div class="controls">
+      <label class="select grow">
+        <span>Player</span>
+        <input id="player-a" list="player-names" autocomplete="off" spellcheck="false">
+      </label>
+      <label class="select grow">
+        <span>Compare with</span>
+        <input id="player-b" list="player-names" autocomplete="off" spellcheck="false" placeholder="Optional">
+      </label>
+      <datalist id="player-names"></datalist>
+    </div>
+    <div class="profile-cards" id="profile-cards"></div>
+    <div class="legend" id="profile-legend"></div>
+    <div class="chart" id="profile-chart"></div>
+  </section>
+</main>
+
+<footer class="wrap foot">
+  <p>Data: season statistics for 2020/21 compiled in this repository (<code>pl_20-21.csv</code> and the club files). Club panels cover the top 10 clubs by wins.</p>
+  <p><a href="r/project.html">Original R dashboard (ZERO1)</a> · <a href="r/big.html">Original discipline dashboard</a> · <a href="https://github.com/biggyatz/EPL-2020-2021-analysis">Source on GitHub</a></p>
+</footer>
+
+<div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+<script src="app.js"></script>
+</body>
+</html>
