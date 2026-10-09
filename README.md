@@ -6,7 +6,6 @@ and club level. The results are published as interactive R
 [flexdashboards](https://pkgs.rstudio.com/flexdashboard/).
 
 **Live site:** <https://biggyatz.github.io/EPL-2020-2021-analysis/>
-(after the one-time GitHub Pages setup below)
 
 | Dashboard | Source | Rendered |
 | --- | --- | --- |
@@ -34,7 +33,8 @@ rmarkdown::render("big.Rmd")
 
 ## Deployment (GitHub Pages)
 
-`.github/workflows/pages.yml` publishes `index.html`, `project.html` and
-`big.html` on every push to `main`. One-time setup:
-**Settings → Pages → Build and deployment → Source: GitHub Actions**, then
-re-run the workflow from the **Actions** tab.
+`.github/workflows/pages.yml` copies `index.html`, `project.html` and
+`big.html` to the `gh-pages` branch on every push to `main`, and GitHub Pages
+serves that branch (**Settings → Pages → Deploy from a branch → `gh-pages` /
+root**). To update the site, re-render the `.Rmd` files, commit the HTML and
+push to `main`.
