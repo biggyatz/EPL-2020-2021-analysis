@@ -51,3 +51,7 @@ the only clubs present in the club files.
 `.github/workflows/pages.yml` publishes `site/` to the root of the `gh-pages`
 branch and the original R dashboards to `r/`, on every push to `main`. GitHub
 Pages serves that branch at <https://biggyatz.github.io/EPL-2020-2021-analysis/>.
+
+## Licence
+
+Copyright © 2024–2026 Biggyat Kumar Pandey. All rights reserved. The code is public for viewing only; see [LICENSE](LICENSE). For permission to use it, email bigyatz123@gmail.com.
